@@ -365,7 +365,8 @@ class TinyGsmSim5360 : public TinyGsmModem<TinyGsmSim5360>,
     // We to ignore any immediate response and wait for the
     // URC to show it's really connected.
     sendAT(GF("+NETOPEN"));
-    if (waitResponse(75000L, GF(GSM_NL "+NETOPEN: 0")) != 1) { return false; }
+    //if (waitResponse(75000L, GF(GSM_NL "+NETOPEN: 0")) != 1) { return false; }
+    if (waitResponse(75000L, GF(GSM_NL "OK")) != 1) { return false; }
 
     return true;
   }
@@ -493,14 +494,15 @@ class TinyGsmSim5360 : public TinyGsmModem<TinyGsmSim5360>,
     if (ssl) { DBG("SSL not yet supported on this module!"); }
     // Make sure we'll be getting data manually on this connection
     sendAT(GF("+CIPRXGET=1"));
-    if (waitResponse() != 1) { return false; }
+    if (waitResponse() != 1) { DBG("CIPRXGET=1 fail"); return false;  }
 
     // Establish a connection in multi-socket mode
     uint32_t timeout_ms = ((uint32_t)timeout_s) * 1000;
     sendAT(GF("+CIPOPEN="), mux, ',', GF("\"TCP"), GF("\",\""), host, GF("\","),
            port);
     // The reply is +CIPOPEN: ## of socket created
-    if (waitResponse(timeout_ms, GF(GSM_NL "+CIPOPEN:")) != 1) { return false; }
+    //if (waitResponse(timeout_ms, GF(GSM_NL "+CIPOPEN:")) != 1) { return false; }
+    if (waitResponse(timeout_ms, GF("+CIPOPEN:")) != 1) { return false; }
     return true;
   }
 
